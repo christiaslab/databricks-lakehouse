@@ -15,7 +15,7 @@ An end-to-end lakehouse on Databricks for a bike retailer: raw CSV exports from 
    └──────────────┬──────────────┘
                   ▼
    ┌─────────────────────────────┐
-   │  SILVER   cleaned tables    │  trim, normalize codes, fix keys/dates/prices, rename
+   │  SILVER   cleaned tables    │  trim, normalize codes, dedupe, fix keys/dates/amounts, rename
    └──────────────┬──────────────┘
                   ▼
    ┌─────────────────────────────┐
