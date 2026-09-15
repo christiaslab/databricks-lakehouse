@@ -1,0 +1,7 @@
+# AI/BI dashboard over the gold star schema. Datasets and layout live in sales_dashboard.lvdash.json.
+resources:
+  dashboards:
+    sales_dashboard:
+      display_name: Bike Sales Overview
+      file_path: ./sales_dashboard.lvdash.json
+      warehouse_id: af1b1f739baad791   # Serverless Starter Warehouse
