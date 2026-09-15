@@ -1,4 +1,4 @@
-# Lakehouse pipeline: bronze -> silver (parallel) -> gold dimensions (parallel) -> gold fact.
+# Lakehouse pipeline: bronze -> silver (parallel) -> DQ gate -> gold dimensions (parallel) -> gold fact.
 # Tasks run on serverless compute (no cluster specified).
 resources:
   jobs:
@@ -41,26 +41,32 @@ resources:
           notebook_task:
             notebook_path: ../notebooks/02_silver/erp/silver_erp_px_cat_g1v2.ipynb
 
-        # ---- gold dimensions: wait for the silver tables they join ----
-        - task_key: gold_dim_customers
+        # ---- data quality gate: gold only runs on clean silver ----
+        - task_key: silver_dq_checks
           depends_on:
             - {task_key: silver_crm_cust_info}
+            - {task_key: silver_crm_prd_info}
+            - {task_key: silver_crm_sales_details}
             - {task_key: silver_erp_cust_az12}
             - {task_key: silver_erp_loc_a101}
+            - {task_key: silver_erp_px_cat_g1v2}
+          notebook_task:
+            notebook_path: ../notebooks/02_silver/silver_dq_checks.ipynb
+
+        # ---- gold dimensions ----
+        - task_key: gold_dim_customers
+          depends_on: [{task_key: silver_dq_checks}]
           notebook_task:
             notebook_path: ../notebooks/03_gold/gold_dim_customers.ipynb
 
         - task_key: gold_dim_products
-          depends_on:
-            - {task_key: silver_crm_prd_info}
-            - {task_key: silver_erp_px_cat_g1v2}
+          depends_on: [{task_key: silver_dq_checks}]
           notebook_task:
             notebook_path: ../notebooks/03_gold/gold_dim_products.ipynb
 
         # ---- gold fact: needs both dimensions for surrogate keys ----
         - task_key: gold_fact_sales
           depends_on:
-            - {task_key: silver_crm_sales_details}
             - {task_key: gold_dim_customers}
             - {task_key: gold_dim_products}
           notebook_task:
