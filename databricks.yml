@@ -1,9 +1,14 @@
-# This is a Declarative Automation Bundle definition for databricks-lakehouse.
-# The Databricks extension requires databricks.yml configuration file.
-# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
-
+# Databricks Asset Bundle for the lakehouse project.
+# See https://docs.databricks.com/dev-tools/bundles/index.html
 bundle:
   name: databricks-lakehouse
+
+include:
+  - resources/*.yml
+
+sync:
+  exclude:
+    - data/**   # raw CSVs live in the volume, not in the workspace files
 
 targets:
   dev:
@@ -11,9 +16,3 @@ targets:
     default: true
     workspace:
       host: https://dbc-e604ef6a-2b72.cloud.databricks.com
-
-  ## Optionally, there could be 'staging' or 'prod' targets here.
-  #
-  # prod:
-  #   workspace:
-  #     host: https://dbc-e604ef6a-2b72.cloud.databricks.com
