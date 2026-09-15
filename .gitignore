@@ -219,3 +219,5 @@ __marimo__/
 
 # Databricks VS Code extension / bundle state
 .databricks/
+
+.databricks
